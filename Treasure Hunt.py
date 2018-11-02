@@ -2,10 +2,6 @@ import pygame
 import random
 import os
 
-
-def criaimg(x,y,tesouro):
-    screen.blit(tesouro,(x,y))
-
 #Matriz cópia
 matriz = [[-1 for x in range (5)] for y in range (5)]
 
@@ -15,7 +11,6 @@ matrizPredef = [[0, 8, 9, 0, 0], [0, 8, 0, 9, 0], [9, 0, 0, 8, 0], [0, 8, 0, 9, 
 pygame.init()
 
 sair = True
-
 
 #Imagens
 tesouro = pygame.image.load(os.path.join('tesouro.png'))
@@ -37,7 +32,7 @@ gray = (128,128,128)
 cores = [white,black,green,blue,gray]
 
 
-#Matriz
+#Valores
 pontos = 0
 vida = 400
 contadorTesouro = 0
@@ -47,6 +42,7 @@ coisasMatriz = [0,8,9]
 #Deixa a matriz aleatória
 random.shuffle(matrizPredef)
 
+#Detecta e define quantos tesouros estão próximos de números
 for i in range(len(matrizPredef)):
     for j in range(len(matrizPredef[i])):
         if matrizPredef[i][j] not in [8,9]:
@@ -77,11 +73,15 @@ vitoria = fonte.render("Você ganhou",False,(0,0,0))
 textoPontos = fonte.render("Você fez " + str(pontos) + " pontos",False,(0,0,0))
 textoVida = fonte.render("Vida",False,(0,0,0))
 legendaTesouro = fonte.render("Tesouro",False,(0,0,0))
-legendaTesouroPontos = fonte.render("100",False(0,0,0))
+legendaTesouropontos = fonte.render("100 pontos",False,(0,0,0))
 legendaMimico = fonte.render("Bomba",False,(0,0,0))
-LegendaMimicoVida = fonte.render("-100",False,(0,0,0))
+legendaMimicovida = fonte.render("-100 vida",False,(0,0,0))
+tituloJogo1 = fonte.render("Caça",False,(0,0,0))
+tituloJogo2 = fonte.render("ao",False,(0,0,0))
+tituloJogo3 = fonte.render("Tesouro",False,(0,0,0))
+divisaoTitulos = fonte.render("_________",False,(0,0,0))
 
-#Imprime o gabarito no Shell      
+#Imprime o "gabarito" no Shell      
 print(matrizPredef)
 
 #Jogo
@@ -91,11 +91,13 @@ while sair == True:
             sair = False
         
         screen.fill(white)
-        pygame.draw.rect(screen,blue,(0,0,503,503),0)
                          
-        #Mouse clique
+        #Clique do mouse
         if(evento.type == pygame.MOUSEBUTTONUP):
             x, y = pygame.mouse.get_pos()
+            
+            #Como ignorar o clique fora da área da matriz?
+            #Como ignorar clique em uma área que já foi escolhida?
             
             #Função pra quando clicar dentro da matriz
             if (x or y) or (x and y) <= 500:
@@ -111,7 +113,7 @@ while sair == True:
                 if vida > 0:
                     vida = vida - 100
                     
-        #Grade preto e verde
+        #Criar os blocos corretos
         for i in range(0,5):
             for j in range (0,5):
                          
@@ -122,16 +124,19 @@ while sair == True:
                          
                 #Tesouro quando encontrado
                 elif (matriz[i][j] == 8):
+                    pygame.draw.rect(screen,blue,(i*100,j*100,100,100),0)
                     pygame.draw.rect(screen,black,(i*100,j*100,100,100),1)
                     screen.blit(tesouro,(i*108,j*110))
                          
                 #Mimico quando encontrado
                 elif (matriz[i][j] == 9):
+                    pygame.draw.rect(screen,blue,(i*100,j*100,100,100),0)
                     pygame.draw.rect(screen,black,(i*100,j*100,100,100),1)
                     screen.blit(mimico,(i*100,j*100))
                          
                 #Numero quando encontrado
                 else:
+                    pygame.draw.rect(screen,blue,(i*100,j*100,100,100),0)
                     pygame.draw.rect(screen,black,(i*100,j*100,100,100),1)
                     screen.blit(imgnum[matriz[i][j]],(i*100,j*100))
                     
@@ -152,7 +157,25 @@ while sair == True:
     
     #Contorno barra de vida
     pygame.draw.rect(screen,black,(50,548,400,25),1)
-                         
+    pygame.draw.rect(screen,black,(50,548,300,25),1)
+    pygame.draw.rect(screen,black,(50,548,200,25),1)
+    pygame.draw.rect(screen,black,(50,548,100,25),1)
+
+    #Titulo
+    screen.blit(tituloJogo1,(555,3))
+    screen.blit(tituloJogo2,(580,46))
+    screen.blit(tituloJogo3,(530,89))
+    screen.blit(divisaoTitulos,(503,114))#Separa os titulos
+    
+    #Legendas
+    screen.blit(legendaTesouro,(530,175))
+    screen.blit(legendaTesouropontos,(504,218))
+    screen.blit(divisaoTitulos,(503,245))#Separa as legendas
+    screen.blit(legendaMimico,(530,304))
+    screen.blit(legendaMimicovida,(506,347))
+    screen.blit(divisaoTitulos,(503,245))
+    screen.blit(divisaoTitulos,(503,370))
+               
     pygame.display.update()
 
     #Vitória | Acaba o jogo
